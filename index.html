@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Advanced Calculator</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#22c55e">
+
+<style>
+:root {
+  --bg:#020617; --panel:#0f172a; --btn:#1e293b;
+  --accent:#22c55e; --text:#e5e7eb;
+}
+body{
+  margin:0; background:radial-gradient(circle,var(--panel),var(--bg));
+  font-family:Segoe UI,sans-serif; display:flex;
+  justify-content:center; align-items:center; height:100vh;
+}
+.calc{
+  width:320px; background:var(--panel); padding:20px;
+  border-radius:20px; box-shadow:0 0 40px rgba(34,197,94,.4);
+  animation:pop .6s ease;
+}
+@keyframes pop{from{scale:.8;opacity:0}to{scale:1;opacity:1}}
+.screen{
+  background:#020617; padding:15px; font-size:26px;
+  border-radius:12px; text-align:right; margin-bottom:15px;
+}
+.keys{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+button{
+  padding:15px;font-size:18px;border:none;border-radius:12px;
+  background:var(--btn);color:var(--text);cursor:pointer;
+}
+button:active{transform:scale(.9)}
+.op{background:#334155}
+.equal{background:var(--accent);color:#020617;grid-column:span 2}
+.install{margin-top:15px;width:100%;background:#16a34a}
+</style>
+</head>
+
+<body>
+<div class="calc">
+  <div id="screen" class="screen">0</div>
+  <div class="keys">
+    <button onclick="clr()">C</button>
+    <button onclick="del()">⌫</button>
+    <button class="op" onclick="add('/')">÷</button>
+    <button class="op" onclick="add('*')">×</button>
+
+    <button onclick="add('7')">7</button>
+    <button onclick="add('8')">8</button>
+    <button onclick="add('9')">9</button>
+    <button class="op" onclick="add('-')">−</button>
+
+    <button onclick="add('4')">4</button>
+    <button onclick="add('5')">5</button>
+    <button onclick="add('6')">6</button>
+    <button class="op" onclick="add('+')">+</button>
+
+    <button onclick="add('1')">1</button>
+    <button onclick="add('2')">2</button>
+    <button onclick="add('3')">3</button>
+    <button class="equal" onclick="calc()">=</button>
+
+    <button onclick="add('0')">0</button>
+    <button onclick="add('.')">.</button>
+  </div>
+
+  <button id="installBtn" class="install" style="display:none">
+    ⬇ Download App
+  </button>
+</div>
+
+<script>
+let exp=""; const screen=document.getElementById("screen");
+function add(v){exp+=v;screen.innerText=exp}
+function clr(){exp="";screen.innerText="0"}
+function del(){exp=exp.slice(0,-1);screen.innerText=exp||"0"}
+function calc(){
+  try{exp=eval(exp).toString();screen.innerText=exp}
+  catch{screen.innerText="Error";exp=""}
+}
+
+let installPrompt; const btn=document.getElementById("installBtn");
+window.addEventListener("beforeinstallprompt",e=>{
+  e.preventDefault();installPrompt=e;btn.style.display="block";
+});
+btn.onclick=()=>{installPrompt.prompt();btn.style.display="none"};
+
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+</body>
+</html>
+
